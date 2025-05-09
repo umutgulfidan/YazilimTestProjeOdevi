@@ -10,7 +10,7 @@ public class RestAssuredTest {
     @BeforeAll
     public static void setup() {
         RestAssured.baseURI = "https://localhost:44316";
-        useRelaxedHTTPSValidation(); // SSL sertifikasını rahatlatmak için
+        useRelaxedHTTPSValidation();
     }
 
     @Test
@@ -27,7 +27,8 @@ public class RestAssuredTest {
                 .statusCode(200)
                 .body("isSuccess", equalTo(true))
                 .body("message", notNullValue())
-                .time(lessThan(1000L)); // JSON içinde 'data' bekleniyor, varsa kontrol et
+                .time(lessThan(1000L));
+
 
 
     }
@@ -36,15 +37,15 @@ public class RestAssuredTest {
     public void Login(){
         given()
                 .contentType("application/json")
-                .accept("*/*")
                 .body("{ \"nationalityId\": \"11111111111\", \"password\": \"123456aA.\" }")
                 .when()
                 .post("/api/Auth/login")
                 .then()
                 .statusCode(200)
                 .body("isSuccess", equalTo(true))
-                .body("data", notNullValue()) // Giriş başarılıysa dönen veri varsa kontrol
-                .time(lessThan(1000L)); // JSON içinde 'data' bekleniyor, varsa kontrol et
+                .body("message", notNullValue())
+                .body("data", notNullValue())
+                .time(lessThan(1000L));
     }
 
 }
