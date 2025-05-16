@@ -1,4 +1,10 @@
 import io.restassured.RestAssured;
+import io.restassured.config.LogConfig;
+import io.restassured.filter.log.ErrorLoggingFilter;
+import io.restassured.filter.log.LogDetail;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;
@@ -11,8 +17,14 @@ public class RestAssuredTest {
     public static void setup() {
         RestAssured.baseURI = "https://localhost:44316";
         useRelaxedHTTPSValidation();
-    }
+        logRequestResponseDetails();
 
+    }
+    //Log detailed request response
+    public static void logRequestResponseDetails(){
+        RestAssured.config = RestAssured.config() .logConfig(LogConfig.logConfig() .enableLoggingOfRequestAndResponseIfValidationFails(LogDetail.ALL) .enablePrettyPrinting(true));
+        RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter(), new ErrorLoggingFilter());
+}
     @Test
     public void GetIlansByQueryTest() {
 
@@ -36,7 +48,7 @@ public class RestAssuredTest {
     @Test
     public void Login(){
         given()
-                .contentType("application/json")
+                .contentType(ContentType.JSON)
                 .body("{ \"nationalityId\": \"11111111111\", \"password\": \"123456aA.\" }")
                 .when()
                 .post("/api/Auth/login")
